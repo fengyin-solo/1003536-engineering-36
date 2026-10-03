@@ -67,5 +67,14 @@ npm run build
   `frontend/src/api/local-service.ts`。
 - 字段、状态、动作与流转目标集中在 `frontend/src/data/modules.ts`；示例数据在
   `frontend/src/data/seed.ts`。
+- 本地初始化集中在 `frontend/src/data/bootstrap.ts`，应用挂载前由 `main.ts` 调用：
+  - 新环境播种演示数据：仪器检定稳定包含待送检、已合格（含证书已过期）、不合格三类仪器；
+  - 检定记录「有效期至」为空或非法日期时，按检定日期顺延一年兜底（无检定日期则从当天起算）；
+  - 旧版带「样例」占位文案的记录按 id 就地迁移，不新增、不重复；用户已流转的状态保留；
+  - 已有业务数据一律跳过、不覆盖；缺失的演示记录才补齐，重复初始化结果不变。
+- 巡检页的「检定仪器巡检待办」不另存数据，每次直接从仪器检定记录派生
+  （`calibrationTodos`），与检定页、站房维护台账共用 ST-001/002/003 同一批站房。
+- 构建前检查：`npm run preflight`（或 `make preflight`），`npm run build` 通过 `prebuild`
+  钩子自动执行，核对三类仪器与待办、跨页同源、旧版迁移、幂等性与有效期兜底。
 - 状态流转只允许在 `local-service.ts` 里改，页面组件不做业务判断。
 - 想回到初始数据：清掉浏览器里 `hydrology-monitor-station:entries` 这一项，或调用 `resetModule(模块)`。

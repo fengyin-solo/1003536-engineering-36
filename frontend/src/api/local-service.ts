@@ -1,9 +1,10 @@
 import { MODULE_BY_KEY } from '@/data/modules'
+import { calibrationTodos } from '@/data/bootstrap'
 import { allRows, listRows, resetRows, saveRows } from '@/data/local-store'
-import type { ActionResult, EntryRow, ModuleMeta, OverviewResult, PageResult } from '@/data/types'
+import type { ActionResult, CalibrationTodo, EntryRow, ModuleMeta, OverviewResult, PageResult } from '@/data/types'
 
 // 会写进数据的「往回走」动作：命中就把这条记录标成异常态，看板上能一眼看出来。
-const NEGATIVE_ACTIONS = ['撤销', '作废', '拒绝', '驳回', '停用', '忽略', '下线', '回滚']
+const NEGATIVE_ACTIONS = ['撤销', '作废', '拒绝', '驳回', '停用', '忽略', '下线', '回滚', '不合格']
 
 export function moduleMeta(key: string): ModuleMeta {
   const meta = MODULE_BY_KEY.get(key)
@@ -26,6 +27,11 @@ export function filterRows(rows: EntryRow[], filters: Record<string, string>): E
 export function listEntries(key: string, filters: Record<string, string> = {}): PageResult {
   const matched = filterRows(listRows(key), filters)
   return { items: matched, total: matched.length, page: 1, size: matched.length }
+}
+
+// 巡检待办直接从检定数据派生：检定页改动后，巡检页看到的是同一批数据。
+export function listCalibrationTodos(): CalibrationTodo[] {
+  return calibrationTodos(listRows('calibration'))
 }
 
 export function runAction(key: string, id: number, action: string): ActionResult {

@@ -6,9 +6,11 @@
   "repoKind": "frontend-only",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run preflight",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "vue-tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit",
+    "preflight": "node scripts/run-preflight.mjs"
   },
   "dependencies": {
     "pinia": "^2.1.7",

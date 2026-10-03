@@ -18,6 +18,40 @@
       </article>
     </div>
 
+    <section class="todo-panel">
+      <header class="todo-head">
+        <h3>检定仪器巡检待办</h3>
+        <span class="todo-hint">直接取自「仪器检定」同一批数据，共 {{ todos.length }} 项</span>
+      </header>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>记录编号</th>
+            <th>仪器编号</th>
+            <th>仪器名称</th>
+            <th>所属站点</th>
+            <th>检定状态</th>
+            <th>有效期至</th>
+            <th>待办原因</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="todo in todos" :key="String(todo.id)">
+            <td>{{ todo.记录编号 }}</td>
+            <td>{{ todo.仪器编号 }}</td>
+            <td>{{ todo.仪器名称 }}</td>
+            <td>{{ todo.所属站点 || todo.站点编号 }}</td>
+            <td>{{ todo.status }}</td>
+            <td>{{ todo.有效期至 || '—' }}</td>
+            <td>{{ todo.reason }}</td>
+          </tr>
+          <tr v-if="!todos.length">
+            <td colspan="7" class="empty-state">当前没有检定仪器相关的巡检待办</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
     <p class="status-legend">
       <span v-for="item in statusSummary" :key="item.status" class="legend-item">
         {{ item.status }}：{{ item.count }}
@@ -64,7 +98,7 @@
     </table>
 
     <footer class="page-foot">
-      <span>共 {{ total }} 条巡检记录记录</span>
+      <span>共 {{ total }} 条巡检记录</span>
       <span v-if="errorMessage" class="error-text">{{ errorMessage }}</span>
     </footer>
   </section>
@@ -75,11 +109,12 @@ import { computed, onMounted, ref } from 'vue'
 
 import {
   downloadEntries,
+  listCalibrationTodos,
   listEntries,
   moduleMeta,
   runAction as applyAction,
 } from '@/api/local-service'
-import type { EntryRow } from '@/data/types'
+import type { CalibrationTodo, EntryRow } from '@/data/types'
 
 const meta = moduleMeta('inspection')
 const columns = ["记录编号", "站点编号", "巡检日期", "巡检人员", "检查项目", "发现问题", "处理措施", "巡检状态"]
@@ -88,6 +123,8 @@ const statuses = ["待巡检", "已巡检", "发现故障", "已处置"]
 const stats = [{"label": "本月巡检次数", "value": 0}, {"label": "已巡检站点", "value": 0}, {"label": "待处置故障", "value": 0}]
 
 const rows = ref<EntryRow[]>([])
+// 巡检待办不单独存数据，每次都从仪器检定记录派生，保证两个页面同源。
+const todos = ref<CalibrationTodo[]>([])
 const total = ref(0)
 const errorMessage = ref('')
 const filters = ref<Record<string, string>>({})
@@ -128,6 +165,7 @@ function reload() {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    todos.value = listCalibrationTodos()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '巡检记录列表读取失败'
   }
@@ -135,3 +173,27 @@ function reload() {
 
 onMounted(reload)
 </script>
+
+<style scoped>
+.todo-panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.todo-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.todo-head h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.todo-hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+</style>

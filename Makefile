@@ -1,4 +1,4 @@
-.PHONY: install frontend build
+.PHONY: install frontend build preflight
 
 install:
 	cd frontend && npm install
@@ -8,3 +8,6 @@ frontend:
 
 build:
 	cd frontend && npm run build
+
+preflight:
+	cd frontend && npm run preflight
