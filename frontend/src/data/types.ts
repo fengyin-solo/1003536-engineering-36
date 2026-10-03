@@ -36,3 +36,6 @@ export type OverviewResult = {
   cards: { label: string; value: number }[]
   modules: { name: string; created: number; pending: number; abnormal: number }[]
 }
+
+// 仪器检定待办的类型定义在 data/calibration.ts，这里转出方便页面统一从 types 引入。
+export type { CalibrationTodoType, CalibrationTodo } from './calibration'

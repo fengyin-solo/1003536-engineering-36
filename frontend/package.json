@@ -6,7 +6,8 @@
   "repoKind": "frontend-only",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "preflight": "node scripts/preflight.mjs",
+    "build": "node scripts/preflight.mjs && vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit"
   },

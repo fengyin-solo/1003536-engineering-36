@@ -18,6 +18,8 @@
       </article>
     </div>
 
+    <CalibrationTodoPanel ref="todoPanel" variant="inspection" />
+
     <p class="status-legend">
       <span v-for="item in statusSummary" :key="item.status" class="legend-item">
         {{ item.status }}：{{ item.count }}
@@ -73,6 +75,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
+import CalibrationTodoPanel from '@/components/CalibrationTodoPanel.vue'
 import {
   downloadEntries,
   listEntries,
@@ -92,6 +95,8 @@ const total = ref(0)
 const errorMessage = ref('')
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
+// 巡检待办取自仪器检定数据；检定记录发生流转后，巡检页重新加载时同步刷新。
+const todoPanel = ref<InstanceType<typeof CalibrationTodoPanel> | null>(null)
 const statusSummary = computed(() =>
   statuses.map((status: string) => ({
     status,

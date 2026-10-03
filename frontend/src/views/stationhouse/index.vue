@@ -18,6 +18,8 @@
       </article>
     </div>
 
+    <CalibrationTodoPanel variant="stationhouse" />
+
     <p class="status-legend">
       <span v-for="item in statusSummary" :key="item.status" class="legend-item">
         {{ item.status }}：{{ item.count }}
@@ -73,6 +75,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
+import CalibrationTodoPanel from '@/components/CalibrationTodoPanel.vue'
 import {
   downloadEntries,
   listEntries,

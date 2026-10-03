@@ -1,3 +1,4 @@
+import { CALIBRATION_DEMO_ROWS, CALIBRATION_KEY } from './calibration'
 import type { EntryRow } from './types'
 
 // 示例数据：首次打开时播种，之后浏览器里的改动优先，重置才会回到这份。
@@ -662,50 +663,8 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
       "维护状态": "站房维护样例3"
     }
   ],
-  "calibration": [
-    {
-      "id": 1,
-      "status": "待送检",
-      "pending": true,
-      "abnormal": false,
-      "记录编号": "CALI-0001",
-      "仪器编号": "CALI-0001",
-      "仪器名称": "仪器检定样例1",
-      "检定单位": "仪器检定样例1",
-      "检定日期": "2026-09-01",
-      "有效期至": "仪器检定样例1",
-      "检定结论": "仪器检定样例1",
-      "检定状态": "仪器检定样例1"
-    },
-    {
-      "id": 2,
-      "status": "送检中",
-      "pending": true,
-      "abnormal": true,
-      "记录编号": "CALI-0002",
-      "仪器编号": "CALI-0002",
-      "仪器名称": "仪器检定样例2",
-      "检定单位": "仪器检定样例2",
-      "检定日期": "2026-09-02",
-      "有效期至": "仪器检定样例2",
-      "检定结论": "仪器检定样例2",
-      "检定状态": "仪器检定样例2"
-    },
-    {
-      "id": 3,
-      "status": "已合格",
-      "pending": false,
-      "abnormal": false,
-      "记录编号": "CALI-0003",
-      "仪器编号": "CALI-0003",
-      "仪器名称": "仪器检定样例3",
-      "检定单位": "仪器检定样例3",
-      "检定日期": "2026-09-03",
-      "有效期至": "仪器检定样例3",
-      "检定结论": "仪器检定样例3",
-      "检定状态": "仪器检定样例3"
-    }
-  ],
+  // 仪器检定的演示数据单独维护在 calibration.ts：包含有效期兜底与待办派生规则。
+  [CALIBRATION_KEY]: CALIBRATION_DEMO_ROWS.map((row) => ({ ...row })),
   "inspection": [
     {
       "id": 1,

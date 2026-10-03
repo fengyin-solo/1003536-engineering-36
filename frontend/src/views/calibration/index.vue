@@ -18,6 +18,8 @@
       </article>
     </div>
 
+    <CalibrationTodoPanel ref="todoPanel" variant="calibration" />
+
     <p class="status-legend">
       <span v-for="item in statusSummary" :key="item.status" class="legend-item">
         {{ item.status }}：{{ item.count }}
@@ -73,7 +75,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
+import CalibrationTodoPanel from '@/components/CalibrationTodoPanel.vue'
 import {
+  calibrationStatusSummary,
   downloadEntries,
   listEntries,
   moduleMeta,
@@ -85,13 +89,15 @@ const meta = moduleMeta('calibration')
 const columns = ["记录编号", "仪器编号", "仪器名称", "检定单位", "检定日期", "有效期至", "检定结论", "检定状态"]
 const actions = ["送出检定", "确认合格", "标记不合格"]
 const statuses = ["待送检", "送检中", "已合格", "不合格", "已停用"]
-const stats = [{"label": "待送检仪器", "value": 0}, {"label": "已合格仪器", "value": 0}, {"label": "不合格仪器", "value": 0}]
+// 三类仪器计数直接取自检定数据，与待办面板、巡检待办、站房台账同源。
+const stats = ref(calibrationStatusSummary())
 
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
 const errorMessage = ref('')
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
+const todoPanel = ref<InstanceType<typeof CalibrationTodoPanel> | null>(null)
 const statusSummary = computed(() =>
   statuses.map((status: string) => ({
     status,
@@ -128,6 +134,8 @@ function reload() {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    stats.value = calibrationStatusSummary()
+    todoPanel.value?.reload()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '仪器检定列表读取失败'
   }
